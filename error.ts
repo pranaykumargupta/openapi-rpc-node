@@ -1,9 +1,9 @@
-'use strict'
+import _ from 'lodash';
+import LOG_CONSTANTS from './logging/log_constants';
+import * as Singleton from './singleton';
+const Error: {[k:string]: any} = {};
 
-const _ = require('lodash');
-const LOG_CONSTANTS = require('./logging/log_constants');
-const Singleton = require('./singleton');
-const Error = {};
+
 
 /** Server side errors */
 Error.RPC_AUTH_ERROR                        = "rpc_auth_error";
@@ -35,7 +35,13 @@ Error.REQUEST_LOAD_SHEDED                   = "request_load_sheded";
 Error.CIRCUIT_BREAKER_ERROR                 = "circuit_breaker_error";
 Error.SERVICE_INIT_ERROR                    = "service_init_error";
 
+
 Error.UCError = class UCError extends global.Error {
+  err_message: string;
+  err_stack: any;
+  err_type: string;
+  code: number;
+  is_silent: boolean;
   constructor(data) {
     data = data || {};
     super();
@@ -51,6 +57,11 @@ Error.UCError = class UCError extends global.Error {
 }
 
 Error.RPCError = class RPCError extends global.Error {
+  err_message: string;
+  err_stack: any;
+  err_type: string;
+  code: number;
+  is_silent: boolean;
   constructor(data) {
     data = data || {};
     super();
@@ -65,6 +76,10 @@ Error.RPCError = class RPCError extends global.Error {
   }
 }
 Error.ExternalError = class ExternalError extends global.Error {
+  err_message: string;
+  err_stack: any;
+  err_name: string;
+  err_type: string;
   constructor(data) {
     if (!data || typeof data === 'string') {
       data = {};
@@ -83,7 +98,7 @@ Error.ExternalError = class ExternalError extends global.Error {
  *  or      INTERNAL_APP_ERROR if wrongly formated error.
  */
 Error.sanitiseError = function(err) {
-  let sanitised_err = {};
+  let sanitised_err: {[k:string]: any} = {};
   if (!err) err = {}
   let errorMessage = err.err_message || err.message
   errorMessage = (typeof errorMessage === 'string') ? errorMessage : '';
@@ -113,18 +128,16 @@ Error.sanitiseError = function(err) {
   * Add UCError class to Singleton and global object.
   */
 Error.initUCError = () => {
-  global.UCError = Error.UCError;
   Singleton.addToSingleton('UCError', Error.UCError);
   return Error.UCError;
-},
+}
 
 /**
 * Add RPCError class to Singleton and global object.
 */
 Error.initRPCError = () => {
-  global.RPCError = Error.RPCError;
   Singleton.addToSingleton('RPCError', Error.RPCError);
   return Error.RPCError;
-},
+}
 
-module.exports = Error;
+export = Error;
