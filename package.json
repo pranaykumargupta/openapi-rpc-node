@@ -8,7 +8,10 @@
     "url": "git+ssh://git@github.com:urbanclap-engg/@uc-engg/openapi-rpc-node.git"
   },
   "files": [
-    "/dist"
+    "/dist",
+    "/schema/service_dependency_interface/",
+    "/types/clients.d.ts",
+    "openapi-rpc-node.d.ts"
   ],
   "scripts": {
     "test": "jest",
